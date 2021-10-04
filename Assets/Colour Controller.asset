@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b92e0d1ca9fc044b85a7faa8e71b83, type: 3}
+  m_Name: Colour Controller
+  m_EditorClassIdentifier: 
+  materials:
+  - {fileID: 2100000, guid: 721c451b667a4e54f80d9ce659fd0ddb, type: 2}
+  - {fileID: 2100000, guid: a70d56d611309694d9421cc374f5ae9a, type: 2}
+  - {fileID: 2100000, guid: 7e77444cf15398e4fb235d395be1ab47, type: 2}
+  - {fileID: 2100000, guid: 65ad92fbd4c02a64191bf83ccc637051, type: 2}
+  - {fileID: 2100000, guid: a49f37a14e299364e869afa14db86fab, type: 2}
+  - {fileID: 2100000, guid: cd24c84b7ec794a47bc46d0ddaa835dc, type: 2}
+  - {fileID: 2100000, guid: ff74486968fec3e4b89384449b550a76, type: 2}
+  - {fileID: 2100000, guid: 6e00a2c747191fb409b80e5b8fb69101, type: 2}
+  - {fileID: 2100000, guid: 241007a2392601e488ec278d33686c08, type: 2}
+  - {fileID: 2100000, guid: a77a422d96d64b4468e311dc53359b3c, type: 2}
+  - {fileID: 2100000, guid: 2c932fc413330fc4fbc4325e89839252, type: 2}
+  - {fileID: 2100000, guid: d553cab8d21b393489174691e8779b62, type: 2}
+  - {fileID: 2100000, guid: 9a68da651e85748479c49c2041a59da6, type: 2}
+  - {fileID: 2100000, guid: 1ab4ebd5a0f0273448b5944f46449f72, type: 2}
+  - {fileID: 2100000, guid: 3c4aba4f955934d47876cc12c0116e58, type: 2}
+  Top:
+  - {fileID: 2100000, guid: 241007a2392601e488ec278d33686c08, type: 2}
+  - {fileID: 2100000, guid: 9a68da651e85748479c49c2041a59da6, type: 2}
+  - {fileID: 0}
+  Side: {fileID: 2100000, guid: d553cab8d21b393489174691e8779b62, type: 2}
