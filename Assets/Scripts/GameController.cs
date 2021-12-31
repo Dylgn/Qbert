@@ -64,6 +64,8 @@ public class GameController : MonoBehaviour
         // Makes player visible
         player.canMove = true;
         player.gameObject.SetActive(true);
+
+        Invoke("EnableCoily", 2.5f);
     }
 
     void Update()
@@ -105,6 +107,7 @@ public class GameController : MonoBehaviour
         
         // Resets all chaaracters after 2s
         Invoke("ResetAllCharacters", 2f);
+        Invoke("NewRound", 3.5f);
         // Plays flashing tile animation
         flashTiles = true;
         StartCoroutine(FlashingTileAnimation());
@@ -154,7 +157,6 @@ public class GameController : MonoBehaviour
             }
         }
         flashTiles = false;
-        Invoke("NewRound", 1.5f);
     }
 
     Vector3 RandomPosAboveLevel(float y)
@@ -224,7 +226,8 @@ public class GameController : MonoBehaviour
         // Updates colours on game
         colour.GetNewColours();
         cube.updateColours(0);
-        // Reset Me's
-        coily.ResetMe();
+        cube.ResetCubeTarget();
+        // Reset all characters
+        ResetAllCharacters();
     }
 }

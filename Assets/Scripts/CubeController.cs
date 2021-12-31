@@ -105,4 +105,9 @@ public class CubeController : MonoBehaviour
         // If no cube is found with the given transform
         throw new NullReferenceException();
     }
+
+    public void ResetCubeTarget()
+    {
+        targetCubes = 0;
+    }
 }

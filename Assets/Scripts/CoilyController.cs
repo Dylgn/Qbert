@@ -43,6 +43,7 @@ public class CoilyController : MonoBehaviour
             Move();
             if (direction == Direction.None)
             {
+                // Switch forms to snake when egg reaches bottom
                 if (activeObject.name.Equals("Egg") && transform.position.y == 1.25)
                 {
                     canMove = false;
@@ -74,7 +75,7 @@ public class CoilyController : MonoBehaviour
                 // Checks if you've reached the destination
                 if (z > destination)
                 {
-                    // Re-aligns the plyaer
+                    // Re-aligns coily
                     transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y) + 0.25f, Mathf.Round(transform.position.z));
                     direction = Direction.None;
                 }
@@ -116,7 +117,8 @@ public class CoilyController : MonoBehaviour
                         ChooseDirection(Direction.DownRight);
                 } else
                 {
-                    float xDifference = transform.position.x - player.transform.position.x; // Difference between coily and players x positions
+                    // Difference between coily and players x positions
+                    float xDifference = transform.position.x - player.transform.position.x;
                     float zDifference = transform.position.z - player.transform.position.z;
                     // Moves towards player in direction where it's furthest away
                     if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
@@ -125,13 +127,15 @@ public class CoilyController : MonoBehaviour
                             ChooseDirection(Direction.DownLeft);
                         else
                             ChooseDirection(Direction.UpRight);
-                    } else if (Mathf.Abs(xDifference) < Mathf.Abs(zDifference))
+                    }
+                    else if (Mathf.Abs(xDifference) < Mathf.Abs(zDifference))
                     {
                         if (zDifference > 0)
                             ChooseDirection(Direction.DownRight);
                         else
                             ChooseDirection(Direction.UpLeft);
-                    } else
+                    }
+                    else
                     {
                         // Chooses UpRight/UpLeft if equidistant (prevents falling off map if on the bottom row)
                         if (xDifference < 0)
@@ -141,6 +145,37 @@ public class CoilyController : MonoBehaviour
                     }
                 }
                 break;
+        }
+    }
+
+    // Determines which direction to move coily
+    void NewSnakeDirection()
+    {
+        // Difference between coily and players x positions
+        float xDifference = transform.position.x - player.transform.position.x;
+        float zDifference = transform.position.z - player.transform.position.z;
+        // Moves towards player in direction where it's furthest away
+        if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
+        {
+            if (xDifference > 0) // Difference is position (coily is further away from centre than player
+                ChooseDirection(Direction.DownLeft);
+            else
+                ChooseDirection(Direction.UpRight);
+        }
+        else if (Mathf.Abs(xDifference) < Mathf.Abs(zDifference))
+        {
+            if (zDifference > 0)
+                ChooseDirection(Direction.DownRight);
+            else
+                ChooseDirection(Direction.UpLeft);
+        }
+        else
+        {
+            // Chooses UpRight/UpLeft if equidistant (prevents falling off map if on the bottom row)
+            if (xDifference < 0)
+                ChooseDirection(Direction.UpRight);
+            else
+                ChooseDirection(Direction.UpLeft);
         }
     }
 
@@ -154,7 +189,7 @@ public class CoilyController : MonoBehaviour
                 parabolaTranslation[1] = (int)(transform.position.y - 0.25f);
                 // Gets the end point of the jump
                 destination = (int)transform.position.z + 1;
-                // Directiono you will jump
+                // Direction you will jump
                 direction = Direction.UpLeft;
                 // Play jump sound effect
                 audio.Play();
@@ -220,10 +255,13 @@ public class CoilyController : MonoBehaviour
         // Resets Coily
         transform.position = new Vector3(4f, 10.25f, 3f);
         falling = true;
+        canMove = false;
         body.useGravity = false;
         direction = Direction.None;
         destination = 0;
         speed = 1;
-        transform.gameObject.SetActive(false);
+        // Disables snake and enables egg
+        transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(1).gameObject.SetActive(false);
     }
 }

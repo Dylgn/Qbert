@@ -141,11 +141,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (collision.gameObject.name.Equals("Egg") || collision.gameObject.name.Equals("Snake"))
-        {
+        if (collision.gameObject.name.Equals("Coily"))
             UI.ResetGame();
-            ResetMe();
-        }
         // Checks if x and z coordinates are very close (to change colour of cube that the player jumps on)
         else if (Mathf.Abs(collision.transform.position.x - transform.position.x) < 0.01f && Mathf.Abs(collision.transform.position.z - transform.position.z) < 0.01f)
         {
