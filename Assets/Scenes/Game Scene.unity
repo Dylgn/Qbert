@@ -2483,13 +2483,15 @@ GameObject:
   - component: {fileID: 372666243}
   - component: {fileID: 372666242}
   - component: {fileID: 372666241}
+  - component: {fileID: 372666244}
+  - component: {fileID: 372666245}
   m_Layer: 0
   m_Name: Red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &372666240
 Transform:
   m_ObjectHideFlags: 0
@@ -2566,6 +2568,35 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372666239}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &372666244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372666239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63578582f722e454e9a68bca7271b8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 0
+--- !u!54 &372666245
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372666239}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1 &381408822
 GameObject:
   m_ObjectHideFlags: 0
@@ -7265,7 +7296,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a126cc240351594c8f96794e641635c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canMove: 0
   player: {fileID: 259502562}
 --- !u!82 &1224553062
 AudioSource:
@@ -7962,7 +7992,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1323498706}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -8849,7 +8879,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399318358}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -10185,6 +10215,7 @@ MonoBehaviour:
   cube: {fileID: 118383790}
   player: {fileID: 259502562}
   coily: {fileID: 1224553061}
+  redBalls: []
   characterParent: {fileID: 1044433885}
   clips:
   - {fileID: 8300000, guid: 97851d718ce54314ab513c4ebe0c50d4, type: 3}

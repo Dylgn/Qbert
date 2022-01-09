@@ -1,7 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CoilyController : MonoBehaviour
+public class BallController : MonoBehaviour
 {
+    public bool isActive;
     // Components
     new AudioSource audio;
     Rigidbody body;
@@ -12,10 +15,6 @@ public class CoilyController : MonoBehaviour
     int destination = 0;
     int[] parabolaTranslation = new int[2];
     Direction direction = Direction.None;
-
-    // Objects
-    [SerializeField] PlayerController player;
-    Transform activeObject; // Active part of coily (either egg or snake)
 
     enum Direction
     {
@@ -28,38 +27,17 @@ public class CoilyController : MonoBehaviour
 
     void Start()
     {
-        activeObject = transform.GetChild(0);
         audio = GetComponent<AudioSource>();
         body = GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
     {
+        // Won't move if ball is falling or it can't move
         if (body.useGravity || !canMove)
             return;
         else
-        {
             Move();
-            if (direction == Direction.None)
-            {
-                // Switch forms to snake when egg reaches bottom
-                if (activeObject.name.Equals("Egg") && transform.position.y == 1.25)
-                {
-                    canMove = false;
-                    speed = 1.25f;
-                    Invoke("SwitchForms", 2);
-                }  
-            }
-        }
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.name.Equals("Top") && body.useGravity && canMove)
-        {
-            body.useGravity = false;
-            transform.position = new Vector3(Mathf.Round(transform.position.x), 6.25f, Mathf.Round(transform.position.z));
-        }
     }
 
     void Move()
@@ -106,74 +84,12 @@ public class CoilyController : MonoBehaviour
                 }
                 break;
             default: // When no direction is selected (chooses one)
-                if (activeObject.name.Equals("Egg"))
-                {
-                    // Randomly moves down the map
-                    if (Random.Range(0, 2) == 0)
-                        ChooseDirection(Direction.DownLeft);
-                    else
-                        ChooseDirection(Direction.DownRight);
-                } else
-                {
-                    // Difference between coily and players x positions
-                    float xDifference = transform.position.x - player.transform.position.x;
-                    float zDifference = transform.position.z - player.transform.position.z;
-                    // Moves towards player in direction where it's furthest away
-                    if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
-                    {
-                        if (xDifference > 0) // Difference is position (coily is further away from centre than player
-                            ChooseDirection(Direction.DownLeft);
-                        else
-                            ChooseDirection(Direction.UpRight);
-                    }
-                    else if (Mathf.Abs(xDifference) < Mathf.Abs(zDifference))
-                    {
-                        if (zDifference > 0)
-                            ChooseDirection(Direction.DownRight);
-                        else
-                            ChooseDirection(Direction.UpLeft);
-                    }
-                    else
-                    {
-                        // Chooses UpRight/UpLeft if equidistant (prevents falling off map if on the bottom row)
-                        if (xDifference < 0)
-                            ChooseDirection(Direction.UpRight);
-                        else
-                            ChooseDirection(Direction.UpLeft);
-                    }
-                }
+                // Randomly moves down the map
+                if (Random.Range(0, 2) == 0)
+                    ChooseDirection(Direction.DownLeft);
+                else
+                    ChooseDirection(Direction.DownRight);
                 break;
-        }
-    }
-
-    // Determines which direction to move coily
-    void NewSnakeDirection()
-    {
-        // Difference between coily and players x positions
-        float xDifference = transform.position.x - player.transform.position.x;
-        float zDifference = transform.position.z - player.transform.position.z;
-        // Moves towards player in direction where it's furthest away
-        if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
-        {
-            if (xDifference > 0) // Difference is position (coily is further away from centre than player
-                ChooseDirection(Direction.DownLeft);
-            else
-                ChooseDirection(Direction.UpRight);
-        }
-        else if (Mathf.Abs(xDifference) < Mathf.Abs(zDifference))
-        {
-            if (zDifference > 0)
-                ChooseDirection(Direction.DownRight);
-            else
-                ChooseDirection(Direction.UpLeft);
-        }
-        else
-        {
-            // Chooses UpRight/UpLeft if equidistant (prevents falling off map if on the bottom row)
-            if (xDifference < 0)
-                ChooseDirection(Direction.UpRight);
-            else
-                ChooseDirection(Direction.UpLeft);
         }
     }
 
@@ -228,38 +144,32 @@ public class CoilyController : MonoBehaviour
         return (float)(-a * Mathf.Pow(independent - (h + parabolaTranslation[0]), 2) + (1.75 + parabolaTranslation[1]));
     }
 
-    void SwitchForms()
+    void OnCollisionEnter(Collision collision)
     {
-        bool toSnake = activeObject.name.Equals("Egg");
-        if (toSnake)
+        if (collision.gameObject.name.Equals("Top") && body.useGravity)
         {
-            activeObject = transform.GetChild(1);
-            canMove = true;
-        } else
-            activeObject = transform.GetChild(0);
-        // Swaps visibility of coily parts
-        transform.GetChild(0).gameObject.SetActive(!toSnake);
-        transform.GetChild(1).gameObject.SetActive(toSnake);
+            body.useGravity = false;
+            transform.position = new Vector3(Mathf.Round(transform.position.x), 6.25f, Mathf.Round(transform.position.z));
+        }
     }
 
-    public void EnableCoily(bool a)
+    public void EnableMe(bool a)
     {
         canMove = a;
         body.useGravity = a;
+        isActive = a;
     }
 
     public void ResetMe()
     {
-        // Resets Coily
-        transform.position = new Vector3(4f, 10.25f, 3f);
+        // Spawns in random position when reset (2nd highest row)
+        if (Random.Range(0, 2) == 1)
+            transform.position = new Vector3(4f, 10.2f, 3f);
+        else
+            transform.position = new Vector3(3f, 10.2f, 4f);
+        // Resets movement
         canMove = false;
         body.useGravity = false;
         direction = Direction.None;
-        destination = 0;
-        speed = 1;
-        activeObject = transform.GetChild(0);
-        // Disables snake and enables egg
-        transform.GetChild(0).gameObject.SetActive(true);
-        transform.GetChild(1).gameObject.SetActive(false);
     }
 }

@@ -17,9 +17,13 @@ public class GameController : MonoBehaviour
     [SerializeField] CubeController cube;
     [SerializeField] PlayerController player;
     [SerializeField] CoilyController coily;
+    [SerializeField] BallController[] redBalls;
 
     [Header("Misc")]
     [SerializeField] Transform characterParent;
+
+    // Enemy Spawning
+    string[][] spawnTable = new string[16][];
 
     // Audio
     new AudioSource audio;
@@ -30,11 +34,30 @@ public class GameController : MonoBehaviour
     int round = 1;
 
     bool flashTiles = false;
+    bool gameActive = false;
 
     void Start()
     {
         coily.transform.position = RandomPosAboveLevel(coily.transform.position.y);
         audio = GetComponent<AudioSource>();
+
+        // List of enemies that will spawn each round (Coily spawns every round)
+        spawnTable[0] = new string[] { "RED" };
+        spawnTable[1] = new string[] { "RED" };
+        spawnTable[2] = new string[] { "GREEN", "UGG", "SLICK" };
+        spawnTable[3] = new string[] { "RED", "GREEN", "SLICK"};
+        spawnTable[4] = new string[] { "GREEN", "UGG", "SLICK" };
+        spawnTable[5] = new string[] { "GREEN", "UGG", "SLICK" };
+        spawnTable[6] = new string[] { "RED", "GREEN", "SLICK" };
+        spawnTable[7] = new string[] { "RED", "GREEN", "UGG", "SLICK" };
+        spawnTable[8] = new string[] { "RED", "GREEN", "SLICK" };
+        spawnTable[9] = new string[] { "GREEN", "UGG", "SLICK" };
+        spawnTable[10] = new string[] { "RED", "GREEN", "UGG", "SLICK" };
+        spawnTable[11] = new string[] { "RED", "GREEN", "UGG", "SLICK" };
+        spawnTable[12] = new string[] { "RED", "GREEN", "SLICK" };
+        spawnTable[13] = new string[] { "RED", "GREEN", "UGG", "SLICK" };
+        spawnTable[14] = new string[] { "RED", "GREEN", "SLICK" };
+        spawnTable[15] = new string[] { "RED", "GREEN", "UGG", "SLICK" }; // Uses this every round after
     }
 
     void NewRound()
@@ -65,6 +88,17 @@ public class GameController : MonoBehaviour
         player.canMove = true;
         player.gameObject.SetActive(true);
 
+        // Enemy spawns based off round
+        int spawnRound = (level * 4 - 4) + round - 1;
+        if (level >= 5)
+            spawnRound = 15;
+
+        // Checks if each enemy is in array (then prepares to spawn it)
+        if (Array.Exists(spawnTable[spawnRound], e => e.Equals("RED")))
+            Invoke("EnableRedBall", 5f);
+
+
+        // Always enables coily
         Invoke("EnableCoily", 2.5f);
     }
 
@@ -74,6 +108,7 @@ public class GameController : MonoBehaviour
             return;
         else if (Input.GetKeyDown(KeyCode.Return))
         {
+            gameActive = true;
             player.canMove = true;
             player.gameObject.SetActive(true);
             PlayText.gameObject.SetActive(false);
@@ -96,8 +131,12 @@ public class GameController : MonoBehaviour
 
         IncreasePoints(bonus);
         // Freezes characters
+        gameActive = false;
         player.canMove = false;
-        coily.canMove = false;
+        coily.EnableCoily(false);
+        redBalls[0].EnableMe(false);
+        redBalls[1].EnableMe(false);
+        redBalls[2].EnableMe(false);
 
         // Plays different audio for advanced to the next round or level
         if (round == 4)
@@ -108,6 +147,7 @@ public class GameController : MonoBehaviour
         // Resets all chaaracters after 2s
         Invoke("ResetAllCharacters", 2f);
         Invoke("NewRound", 3.5f);
+
         // Plays flashing tile animation
         flashTiles = true;
         StartCoroutine(FlashingTileAnimation());
@@ -115,7 +155,27 @@ public class GameController : MonoBehaviour
 
     void EnableCoily()
     {
-        coily.EnableCoily();
+        if (gameActive)
+            coily.EnableCoily(true);
+    }
+
+    void EnableRedBall()
+    {
+        // Doesn't spawn new balls if player can't move
+        if (!gameActive)
+            return;
+
+        // Tries to enable the first ball that isn't active
+        if (!redBalls[0].isActive)
+            redBalls[0].EnableMe(true);
+        /*
+        else if (!redBalls[1].isActive)
+            redBalls[1].EnableMe(true);
+        else
+            redBalls[2].EnableMe(true);*/
+
+        // Enables Red Ball Again
+        Invoke("EnableRedBall", 3f);
     }
 
     void ResetAllCharacters()
@@ -140,6 +200,20 @@ public class GameController : MonoBehaviour
                         break;
                     case "Wrongway":
                         child.position = new Vector3(-6.675f, 0.5f, 4);
+                        break;
+                    case "Red":
+                        // Spawns in random position when reset (2nd highest row)
+                        if (UnityEngine.Random.Range(0, 2) == 1)
+                            transform.position = new Vector3(4f, 10.2f, 3f);
+                        else
+                            transform.position = new Vector3(3f, 10.2f, 4f);
+                        break;
+                    case "Green":
+                        // Spawns in random position when reset (2nd highest row)
+                        if (UnityEngine.Random.Range(0, 2) == 1)
+                            transform.position = new Vector3(4f, 10.2f, 3f);
+                        else
+                            transform.position = new Vector3(3f, 10.2f, 4f);
                         break;
                     default:
                         child.position = RandomPosAboveLevel(child.position.y);
@@ -229,5 +303,6 @@ public class GameController : MonoBehaviour
         cube.ResetCubeTarget();
         // Reset all characters
         ResetAllCharacters();
+        gameActive = false;
     }
 }
