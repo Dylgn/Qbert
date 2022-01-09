@@ -198,6 +198,12 @@ public class BallController : MonoBehaviour
         
     }
 
+    public void Freeze(bool a)
+    {
+        canMove = a;
+        body.useGravity = a;
+    }
+
     public void ResetMe()
     {
         // Resets movement

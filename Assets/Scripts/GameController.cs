@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
     [SerializeField] PlayerController player;
     [SerializeField] CoilyController coily;
     [SerializeField] BallController[] redBalls;
+    [SerializeField] BallController greenBall;
 
     [Header("Misc")]
     [SerializeField] Transform characterParent;
@@ -42,7 +43,7 @@ public class GameController : MonoBehaviour
         audio = GetComponent<AudioSource>();
 
         // List of enemies that will spawn each round (Coily spawns every round)
-        spawnTable[0] = new string[] { "RED" };
+        spawnTable[0] = new string[] { "RED", "GREEN" /*TEMP*/ };
         spawnTable[1] = new string[] { "RED" };
         spawnTable[2] = new string[] { "GREEN", "UGG", "SLICK" };
         spawnTable[3] = new string[] { "RED", "GREEN", "SLICK"};
@@ -119,9 +120,11 @@ public class GameController : MonoBehaviour
         // Checks if each enemy is in array (then prepares to spawn it)
         if (Array.Exists(spawnTable[spawnRound], e => e.Equals("RED")))
             InvokeRepeating("EnableRedBall", 5f, 5f);
+        if (Array.Exists(spawnTable[spawnRound], e => e.Equals("GREEN")))
+            InvokeRepeating("EnableGreenBall", 14f, 10f);
 
-        // Always enables coily
-        Invoke("EnableCoily", 2.5f);
+            // Always enables coily
+            //Invoke("EnableCoily", 2.5f);
     }
 
     public void EndRound()
@@ -147,6 +150,7 @@ public class GameController : MonoBehaviour
         redBalls[0].EnableMe(false);
         redBalls[1].EnableMe(false);
         redBalls[2].EnableMe(false);
+        greenBall.EnableMe(false);
 
         // Plays different audio for advanced to the next round or level
         if (round == 4)
@@ -182,6 +186,14 @@ public class GameController : MonoBehaviour
             redBalls[2].EnableMe(true);
     }
 
+    void EnableGreenBall()
+    {
+        if (!gameActive)
+            CancelInvoke("EnableGreenBall");
+        else if (!greenBall.isActive)
+            greenBall.EnableMe(true);
+    }
+
     void ResetAllCharacters()
     {
         coily.ResetMe();
@@ -189,6 +201,7 @@ public class GameController : MonoBehaviour
         redBalls[0].ResetMe();
         redBalls[1].ResetMe();
         redBalls[2].ResetMe();
+        greenBall.ResetMe();
 
         flashTiles = false;
     }
@@ -203,6 +216,28 @@ public class GameController : MonoBehaviour
             default:
                 return new Vector3(4, y, 3);
         }
+    }
+
+    public void Freeze()
+    {
+        greenBall.ResetMe();
+        StartCoroutine(FreezeEnemies(true));
+    }
+
+    // Freezes enemies when player hits a green ball
+    IEnumerator FreezeEnemies(bool freeze)
+    {
+        // Freezes all enemies
+        coily.Freeze(freeze);
+        redBalls[0].Freeze(freeze);
+        redBalls[1].Freeze(freeze);
+        redBalls[2].Freeze(freeze);
+
+        if (freeze)
+        {
+            yield return new WaitForSeconds(6f);
+            FreezeEnemies(false);
+        }   
     }
 
     IEnumerator FlashingTileAnimation()

@@ -141,24 +141,27 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (!collision.gameObject.name.Equals("Top") && !collision.gameObject.name.Equals("Left") && !collision.gameObject.name.Equals("Right"))
+        // Freeze enemies when hitting the green ball
+        if (collision.gameObject.name.Equals("Green"))
+            UI.Freeze();
+        // Resets game against all other enemies
+        else if (!collision.gameObject.name.Equals("Top") && !collision.gameObject.name.Equals("Left") && !collision.gameObject.name.Equals("Right"))
             UI.ResetGame();
         // Checks if x and z coordinates are very close (to change colour of cube that the player jumps on)
         else if (Mathf.Abs(collision.transform.position.x - transform.position.x) < 0.01f && Mathf.Abs(collision.transform.position.z - transform.position.z) < 0.01f)
         {
+            // Colour of cube player is standing on
             Material colour = cubeController.GetColour(collision.transform);
+            // Changes colour based on what the colour is and what level (level 2 has 3 colours)
             if (colour == cubeController.GetColour("TOP_PRIMARY"))
-            {
                 cubeController.SetColour(collision.transform, cubeController.GetColour("TOP_SECONDARY"));
-            } else if (colour == cubeController.GetColour("TOP_SECONDARY"))
+            else if (colour == cubeController.GetColour("TOP_SECONDARY"))
             {
+                // Changes to tertiary if level 2, switches back to primary if level 3 or higher
                 if (UI.GetLevel() == 2)
-                {
                     cubeController.SetColour(collision.transform, cubeController.GetColour("TOP_TERTIARY"));
-                } else if (UI.GetLevel() > 2)
-                {
+                else if (UI.GetLevel() > 2)
                     cubeController.SetColour(collision.transform, cubeController.GetColour("TOP_PRIMARY"));
-                }
             }
         }
     }

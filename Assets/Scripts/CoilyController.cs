@@ -258,6 +258,12 @@ public class CoilyController : MonoBehaviour
         body.isKinematic = !a;
     }
 
+    public void Freeze(bool a)
+    {
+        canMove = a;
+        body.useGravity = a;
+    }
+
     public void ResetMe()
     {
         // Spawns in random position when reset (2nd highest row)
