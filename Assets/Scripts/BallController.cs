@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    public bool isActive;
+    public bool isActive = false;
     // Components
     new AudioSource audio;
     Rigidbody body;
@@ -42,6 +42,7 @@ public class BallController : MonoBehaviour
 
     void Move()
     {
+        CheckIfOutOfBounds();
         switch (direction)
         {
             case Direction.UpLeft:
@@ -84,6 +85,8 @@ public class BallController : MonoBehaviour
                 }
                 break;
             default: // When no direction is selected (chooses one)
+                // Re-alligns object onto play area
+                transform.position = new Vector3(transform.position.x, Mathf.Floor(transform.position.y) + 0.25f, transform.position.z);
                 // Randomly moves down the map
                 if (Random.Range(0, 2) == 0)
                     ChooseDirection(Direction.DownLeft);
@@ -135,6 +138,23 @@ public class BallController : MonoBehaviour
         }
     }
 
+    void CheckIfOutOfBounds()
+    {
+        // Checks if the object is out of bounds
+        if (transform.position.x > 4 || transform.position.z > 4)
+        {
+            destination = 8;
+            if (transform.position.x == 8 || transform.position.z == 8)
+                ResetMe();
+        }
+        else if (transform.position.x + transform.position.z < 2)
+        {
+            destination = -4;
+            if (transform.position.x == -4 || transform.position.z == -4)
+                ResetMe();
+        }
+    }
+
     float MoveOnParabola(float independent)
     {
         // Moves object to another cube using a parabola equation
@@ -158,18 +178,20 @@ public class BallController : MonoBehaviour
         canMove = a;
         body.useGravity = a;
         isActive = a;
+        
     }
 
     public void ResetMe()
     {
+        // Resets movement
+        EnableMe(false);
+        direction = Direction.None;
+        destination = 0;
+
         // Spawns in random position when reset (2nd highest row)
         if (Random.Range(0, 2) == 1)
             transform.position = new Vector3(4f, 10.2f, 3f);
         else
             transform.position = new Vector3(3f, 10.2f, 4f);
-        // Resets movement
-        canMove = false;
-        body.useGravity = false;
-        direction = Direction.None;
     }
 }

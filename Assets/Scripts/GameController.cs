@@ -84,6 +84,29 @@ public class GameController : MonoBehaviour
         else
             targetColourImage.material = colour.Top[1];
 
+        // Starts new round
+        StartRound();
+    }
+
+    void Update()
+    {
+        if (!PlayText.gameObject.activeSelf)
+            return;
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            // Hides "Press 'Enter' To Play" Text
+            PlayText.gameObject.SetActive(false);
+
+            // Starts new round
+            StartRound();
+        }
+    }
+
+    void StartRound()
+    {
+        // Starts game
+        gameActive = true;
+
         // Makes player visible
         player.canMove = true;
         player.gameObject.SetActive(true);
@@ -95,25 +118,10 @@ public class GameController : MonoBehaviour
 
         // Checks if each enemy is in array (then prepares to spawn it)
         if (Array.Exists(spawnTable[spawnRound], e => e.Equals("RED")))
-            Invoke("EnableRedBall", 5f);
-
+            InvokeRepeating("EnableRedBall", 5f, 5f);
 
         // Always enables coily
         Invoke("EnableCoily", 2.5f);
-    }
-
-    void Update()
-    {
-        if (!PlayText.gameObject.activeSelf)
-            return;
-        else if (Input.GetKeyDown(KeyCode.Return))
-        {
-            gameActive = true;
-            player.canMove = true;
-            player.gameObject.SetActive(true);
-            PlayText.gameObject.SetActive(false);
-            Invoke("EnableCoily", 2.5f);
-        }
     }
 
     public void EndRound()
@@ -161,75 +169,27 @@ public class GameController : MonoBehaviour
 
     void EnableRedBall()
     {
-        // Doesn't spawn new balls if player can't move
+        // Doesn't spawn new balls if game isn't active
         if (!gameActive)
             return;
 
         // Tries to enable the first ball that isn't active
         if (!redBalls[0].isActive)
             redBalls[0].EnableMe(true);
-        /*
         else if (!redBalls[1].isActive)
             redBalls[1].EnableMe(true);
         else
-            redBalls[2].EnableMe(true);*/
-
-        // Enables Red Ball Again
-        Invoke("EnableRedBall", 3f);
+            redBalls[2].EnableMe(true);
     }
 
     void ResetAllCharacters()
     {
-        // Hides and resets position of all characters in the game
-        foreach (Transform parent in characterParent)
-        {
-            foreach (Transform child in parent)
-            {
-                if (!child.gameObject.activeSelf)
-                    continue;
-                else if (child.name == "Snake" || child.name == "Egg") // Coily's position is stored in the parent and therefore has to be managed differently
-                {
-                    child.gameObject.SetActive(false);
-                    continue;
-                }
-                // Find starting position of child
-                switch (child.name)
-                {
-                    case "Ugg":
-                        child.position = new Vector3(4, 0.5f, -6.675f);
-                        break;
-                    case "Wrongway":
-                        child.position = new Vector3(-6.675f, 0.5f, 4);
-                        break;
-                    case "Red":
-                        // Spawns in random position when reset (2nd highest row)
-                        if (UnityEngine.Random.Range(0, 2) == 1)
-                            transform.position = new Vector3(4f, 10.2f, 3f);
-                        else
-                            transform.position = new Vector3(3f, 10.2f, 4f);
-                        break;
-                    case "Green":
-                        // Spawns in random position when reset (2nd highest row)
-                        if (UnityEngine.Random.Range(0, 2) == 1)
-                            transform.position = new Vector3(4f, 10.2f, 3f);
-                        else
-                            transform.position = new Vector3(3f, 10.2f, 4f);
-                        break;
-                    default:
-                        child.position = RandomPosAboveLevel(child.position.y);
-                        break;
-                }
-                // Disables character
-                child.gameObject.SetActive(false);
-            }
-            // Coily's position is stored in the parent and therefore has to be managed differently
-            if (parent.name == "Coily")
-                coily.ResetMe(); //parent.position = RandomPosAboveLevel(parent.position.y);
-            else if (parent.name == "Qbert")
-            {
-                player.ResetMe();
-            }
-        }
+        coily.ResetMe();
+        player.ResetMe();
+        redBalls[0].ResetMe();
+        redBalls[1].ResetMe();
+        redBalls[2].ResetMe();
+
         flashTiles = false;
     }
 
@@ -289,6 +249,11 @@ public class GameController : MonoBehaviour
 
     public void ResetGame()
     {
+        // Reset all characters
+        gameActive = false;
+        ResetAllCharacters();
+        // Cancels all invokoe calls
+        CancelInvoke();
         // Resets UI Elements
         points = 0;
         pointsText.text = "0";
@@ -301,8 +266,5 @@ public class GameController : MonoBehaviour
         colour.GetNewColours();
         cube.updateColours(0);
         cube.ResetCubeTarget();
-        // Reset all characters
-        ResetAllCharacters();
-        gameActive = false;
     }
 }

@@ -250,8 +250,13 @@ public class CoilyController : MonoBehaviour
 
     public void ResetMe()
     {
+        // Spawns in random position when reset (2nd highest row)
+        if (UnityEngine.Random.Range(0, 2) == 1)
+            transform.position = new Vector3(4f, 10.2f, 3f);
+        else
+            transform.position = new Vector3(3f, 10.2f, 4f);
+
         // Resets Coily
-        transform.position = new Vector3(4f, 10.25f, 3f);
         canMove = false;
         body.useGravity = false;
         direction = Direction.None;
