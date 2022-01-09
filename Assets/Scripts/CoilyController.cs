@@ -58,6 +58,7 @@ public class CoilyController : MonoBehaviour
         if (collision.gameObject.name.Equals("Top") && body.useGravity && canMove)
         {
             body.useGravity = false;
+            body.isKinematic = true;
             transform.position = new Vector3(Mathf.Round(transform.position.x), 6.25f, Mathf.Round(transform.position.z));
         }
     }
@@ -118,10 +119,18 @@ public class CoilyController : MonoBehaviour
                     // Difference between coily and players x positions
                     float xDifference = transform.position.x - player.transform.position.x;
                     float zDifference = transform.position.z - player.transform.position.z;
+
                     // Moves towards player in direction where it's furthest away
-                    if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
+                    if (Mathf.Abs(xDifference) == Mathf.Abs(zDifference))
                     {
-                        if (xDifference > 0) // Difference is position (coily is further away from centre than player
+                        if (transform.position.y > player.transform.position.y)
+                            ChooseDirection(Direction.DownLeft);
+                        else
+                            ChooseDirection(Direction.UpLeft);
+                    }
+                    else if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
+                    {
+                        if (xDifference > 0) // Difference is position (coily is further away from centre than player)
                             ChooseDirection(Direction.DownLeft);
                         else
                             ChooseDirection(Direction.UpRight);
@@ -246,6 +255,7 @@ public class CoilyController : MonoBehaviour
     {
         canMove = a;
         body.useGravity = a;
+        body.isKinematic = !a;
     }
 
     public void ResetMe()
@@ -257,8 +267,7 @@ public class CoilyController : MonoBehaviour
             transform.position = new Vector3(3f, 10.2f, 4f);
 
         // Resets Coily
-        canMove = false;
-        body.useGravity = false;
+        EnableCoily(false);
         direction = Direction.None;
         destination = 0;
         speed = 1;

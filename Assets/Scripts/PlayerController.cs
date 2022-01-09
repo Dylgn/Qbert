@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
             return;
         else if (direction == Direction.None)
         {
-            if (Input.GetKeyDown(UpLeft))
+            if (Input.GetKey(UpLeft))
             {
                 // Translations to use on parabola (used for jumping to another cube)
                 parabolaTranslation[0] = (int)transform.position.z;
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
                 // Play jump sound effect
                 audio.Play();
             }
-            else if (Input.GetKeyDown(UpRight))
+            else if (Input.GetKey(UpRight))
             {
                 parabolaTranslation[0] = (int)transform.position.x;
                 parabolaTranslation[1] = (int)(transform.position.y - 0.25f);
@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
                 direction = Direction.UpRight;
                 audio.Play();
             }
-            else if (Input.GetKeyDown(DownLeft))
+            else if (Input.GetKey(DownLeft))
             {
                 parabolaTranslation[0] = (int)transform.position.x - 1;
                 parabolaTranslation[1] = (int)(transform.position.y - 1.25f);
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
                 direction = Direction.DownLeft;
                 audio.Play();
             }
-            else if (Input.GetKeyDown(DownRight))
+            else if (Input.GetKey(DownRight))
             {
                 parabolaTranslation[0] = (int)transform.position.z - 1;
                 parabolaTranslation[1] = (int)(transform.position.y - 1.25f);

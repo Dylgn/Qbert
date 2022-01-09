@@ -126,6 +126,8 @@ public class GameController : MonoBehaviour
 
     public void EndRound()
     {
+        gameActive = false;
+
         // Points gained from round
         int bonus = 1000 * level;
         // Caps at 5000 per round
@@ -171,10 +173,8 @@ public class GameController : MonoBehaviour
     {
         // Doesn't spawn new balls if game isn't active
         if (!gameActive)
-            return;
-
-        // Tries to enable the first ball that isn't active
-        if (!redBalls[0].isActive)
+            CancelInvoke("EnableRedBall");
+        else if (!redBalls[0].isActive) // Tries to enable the first ball that isn't active
             redBalls[0].EnableMe(true);
         else if (!redBalls[1].isActive)
             redBalls[1].EnableMe(true);
@@ -253,7 +253,7 @@ public class GameController : MonoBehaviour
         gameActive = false;
         ResetAllCharacters();
         // Cancels all invokoe calls
-        CancelInvoke();
+        CancelInvoke("EnableRedBall");
         // Resets UI Elements
         points = 0;
         pointsText.text = "0";

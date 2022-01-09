@@ -16,6 +16,9 @@ public class BallController : MonoBehaviour
     int[] parabolaTranslation = new int[2];
     Direction direction = Direction.None;
 
+    // Controllers
+    [SerializeField] CubeController cubeController;
+
     enum Direction
     {
         None,
@@ -42,7 +45,6 @@ public class BallController : MonoBehaviour
 
     void Move()
     {
-        CheckIfOutOfBounds();
         switch (direction)
         {
             case Direction.UpLeft:
@@ -94,6 +96,7 @@ public class BallController : MonoBehaviour
                     ChooseDirection(Direction.DownRight);
                 break;
         }
+        CheckIfOutOfBounds();
     }
 
     void ChooseDirection(Direction newDirection)
@@ -169,7 +172,20 @@ public class BallController : MonoBehaviour
         if (collision.gameObject.name.Equals("Top") && body.useGravity)
         {
             body.useGravity = false;
+            body.isKinematic = true;
             transform.position = new Vector3(Mathf.Round(transform.position.x), 6.25f, Mathf.Round(transform.position.z));
+
+            // Reverts colour if green
+            if (transform.gameObject.name == "Green")
+            {
+                // Colour of cube the ball is on
+                Material colour = cubeController.GetColour(collision.transform);
+                // Reverts colour 1 tier down
+                if (colour == cubeController.GetColour("TOP_SECONDARY"))
+                    cubeController.SetColour(collision.transform, cubeController.GetColour("TOP_PRIMARY"));
+                else if (colour == cubeController.GetColour("TOP_TERTIARY"))
+                    cubeController.SetColour(collision.transform, cubeController.GetColour("TOP_SECONDARY"));
+            }
         }
     }
 
@@ -177,6 +193,7 @@ public class BallController : MonoBehaviour
     {
         canMove = a;
         body.useGravity = a;
+        body.isKinematic = !a;
         isActive = a;
         
     }
