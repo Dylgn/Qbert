@@ -143,9 +143,9 @@ public class PlayerController : MonoBehaviour
 
         // Freeze enemies when hitting the green ball
         if (collision.gameObject.name.Equals("Green"))
-            UI.Freeze();
+            UI.hitGreen();
         // Resets game against all other enemies
-        else if (!collision.gameObject.name.Equals("Top") && !collision.gameObject.name.Equals("Left") && !collision.gameObject.name.Equals("Right"))
+        if (!collision.gameObject.name.Equals("Top") && !collision.gameObject.name.Equals("Left") && !collision.gameObject.name.Equals("Right"))
             UI.ResetGame();
         // Checks if x and z coordinates are very close (to change colour of cube that the player jumps on)
         else if (Mathf.Abs(collision.transform.position.x - transform.position.x) < 0.01f && Mathf.Abs(collision.transform.position.z - transform.position.z) < 0.01f)

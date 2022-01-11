@@ -124,9 +124,13 @@ public class CoilyController : MonoBehaviour
                     if (Mathf.Abs(xDifference) == Mathf.Abs(zDifference))
                     {
                         if (transform.position.y > player.transform.position.y)
-                            ChooseDirection(Direction.DownLeft);
-                        else
+                            ChooseDirection(Direction.DownRight);
+                        else if (transform.position.y < player.transform.position.y)
                             ChooseDirection(Direction.UpLeft);
+                        else if (transform.position.x > player.transform.position.x)
+                            ChooseDirection(Direction.DownLeft);
+                        else // Player is to the left of coily
+                            ChooseDirection(Direction.UpRight);
                     }
                     else if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
                     {
@@ -152,37 +156,6 @@ public class CoilyController : MonoBehaviour
                     }
                 }
                 break;
-        }
-    }
-
-    // Determines which direction to move coily
-    void NewSnakeDirection()
-    {
-        // Difference between coily and players x positions
-        float xDifference = transform.position.x - player.transform.position.x;
-        float zDifference = transform.position.z - player.transform.position.z;
-        // Moves towards player in direction where it's furthest away
-        if (Mathf.Abs(xDifference) > Mathf.Abs(zDifference))
-        {
-            if (xDifference > 0) // Difference is position (coily is further away from centre than player
-                ChooseDirection(Direction.DownLeft);
-            else
-                ChooseDirection(Direction.UpRight);
-        }
-        else if (Mathf.Abs(xDifference) < Mathf.Abs(zDifference))
-        {
-            if (zDifference > 0)
-                ChooseDirection(Direction.DownRight);
-            else
-                ChooseDirection(Direction.UpLeft);
-        }
-        else
-        {
-            // Chooses UpRight/UpLeft if equidistant (prevents falling off map if on the bottom row)
-            if (xDifference < 0)
-                ChooseDirection(Direction.UpRight);
-            else
-                ChooseDirection(Direction.UpLeft);
         }
     }
 
@@ -233,7 +206,7 @@ public class CoilyController : MonoBehaviour
         // Moves object to another cube using a parabola equation
         float a = 2 + Mathf.Sqrt(3);
         float h = (3 - Mathf.Sqrt(3)) / 2;
-        // In Vertex form y = -a(x-h)^2+k   parabolaTranslation is based on player's position
+        // In Vertex form y = -a(x-h)^2+k   parabolaTranslation is based on object's position
         return (float)(-a * Mathf.Pow(independent - (h + parabolaTranslation[0]), 2) + (1.75 + parabolaTranslation[1]));
     }
 
@@ -256,12 +229,6 @@ public class CoilyController : MonoBehaviour
         canMove = a;
         body.useGravity = a;
         body.isKinematic = !a;
-    }
-
-    public void Freeze(bool a)
-    {
-        canMove = a;
-        body.useGravity = a;
     }
 
     public void ResetMe()

@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
     [SerializeField] CoilyController coily;
     [SerializeField] BallController[] redBalls;
     [SerializeField] BallController greenBall;
+    [SerializeField] UggController[] ugg;
 
     [Header("Misc")]
     [SerializeField] Transform characterParent;
@@ -43,7 +44,7 @@ public class GameController : MonoBehaviour
         audio = GetComponent<AudioSource>();
 
         // List of enemies that will spawn each round (Coily spawns every round)
-        spawnTable[0] = new string[] { "RED", "GREEN" /*TEMP*/ };
+        spawnTable[0] = new string[] { "RED", "UGG" /*TEMP*/ };
         spawnTable[1] = new string[] { "RED" };
         spawnTable[2] = new string[] { "GREEN", "UGG", "SLICK" };
         spawnTable[3] = new string[] { "RED", "GREEN", "SLICK"};
@@ -121,10 +122,12 @@ public class GameController : MonoBehaviour
         if (Array.Exists(spawnTable[spawnRound], e => e.Equals("RED")))
             InvokeRepeating("EnableRedBall", 5f, 5f);
         if (Array.Exists(spawnTable[spawnRound], e => e.Equals("GREEN")))
-            InvokeRepeating("EnableGreenBall", 14f, 10f);
+            Invoke("EnableGreenBall", 14f);
+        if (Array.Exists(spawnTable[spawnRound], e => e.Equals("UGG")))
+            InvokeRepeating("EnableUgg", 6.5f, 5f);
 
-            // Always enables coily
-            //Invoke("EnableCoily", 2.5f);
+        // Always enables coily
+        Invoke("EnableCoily", 2.5f);
     }
 
     public void EndRound()
@@ -151,6 +154,11 @@ public class GameController : MonoBehaviour
         redBalls[1].EnableMe(false);
         redBalls[2].EnableMe(false);
         greenBall.EnableMe(false);
+        ugg[0].EnableMe(false);
+        ugg[1].EnableMe(false);
+        ugg[2].EnableMe(false);
+        ugg[3].EnableMe(false);
+
 
         // Plays different audio for advanced to the next round or level
         if (round == 4)
@@ -188,22 +196,57 @@ public class GameController : MonoBehaviour
 
     void EnableGreenBall()
     {
+        // Cancels if game is no longer active
         if (!gameActive)
-            CancelInvoke("EnableGreenBall");
-        else if (!greenBall.isActive)
+            return;
+        else if (!greenBall.isActive) // Otherwise, enables the green ball
             greenBall.EnableMe(true);
+
+        Invoke("EnableGreenBall", 10f);
+    }
+
+    void EnableUgg()
+    {
+        // Cancels if game is no longer active
+        if (!gameActive)
+        {
+            CancelInvoke("EnableUgg");
+            return;
+        }
+        else if (!ugg[0].isActive) // Otherwise, enables ugg (or Wrongway)
+            ugg[0].EnableMe(true);
+        else if (!ugg[1].isActive)
+            ugg[1].EnableMe(true);
+        else if (!ugg[2].isActive)
+            ugg[2].EnableMe(true);
+        else if (!ugg[3].isActive)
+            ugg[3].EnableMe(true);
     }
 
     void ResetAllCharacters()
     {
         coily.ResetMe();
         player.ResetMe();
+
         redBalls[0].ResetMe();
         redBalls[1].ResetMe();
         redBalls[2].ResetMe();
+
         greenBall.ResetMe();
 
+        ugg[0].ResetMe();
+        ugg[1].ResetMe();
+        ugg[2].ResetMe();
+        ugg[3].ResetMe();
+
         flashTiles = false;
+    }
+
+    public void hitGreen()
+    {
+        IncreasePoints(100);
+        greenBall.ResetMe();
+        Invoke("EnableGreenBall", 10f);
     }
 
     Vector3 RandomPosAboveLevel(float y)
@@ -216,28 +259,6 @@ public class GameController : MonoBehaviour
             default:
                 return new Vector3(4, y, 3);
         }
-    }
-
-    public void Freeze()
-    {
-        greenBall.ResetMe();
-        StartCoroutine(FreezeEnemies(true));
-    }
-
-    // Freezes enemies when player hits a green ball
-    IEnumerator FreezeEnemies(bool freeze)
-    {
-        // Freezes all enemies
-        coily.Freeze(freeze);
-        redBalls[0].Freeze(freeze);
-        redBalls[1].Freeze(freeze);
-        redBalls[2].Freeze(freeze);
-
-        if (freeze)
-        {
-            yield return new WaitForSeconds(6f);
-            FreezeEnemies(false);
-        }   
     }
 
     IEnumerator FlashingTileAnimation()
@@ -288,7 +309,7 @@ public class GameController : MonoBehaviour
         gameActive = false;
         ResetAllCharacters();
         // Cancels all invokoe calls
-        CancelInvoke("EnableRedBall");
+        CancelInvoke();
         // Resets UI Elements
         points = 0;
         pointsText.text = "0";

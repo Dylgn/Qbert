@@ -70,6 +70,7 @@ public class BallController : MonoBehaviour
                 break;
             case Direction.DownLeft:
                 x = transform.position.x - Time.fixedDeltaTime * speed;
+                //Debug.Log(x + " " + MoveOnParabola(x) + " " + transform.position.z + " " + parabolaTranslation[0] + " " + parabolaTranslation[1]);
                 transform.position = new Vector3(x, MoveOnParabola(x), transform.position.z);
                 if (x < destination)
                 {
@@ -79,6 +80,7 @@ public class BallController : MonoBehaviour
                 break;
             case Direction.DownRight:
                 z = transform.position.z - Time.fixedDeltaTime * speed;
+                //Debug.Log(transform.position.x + " " + MoveOnParabola(z) + " " + z + " " + parabolaTranslation[0] + " " + parabolaTranslation[1]);
                 transform.position = new Vector3(transform.position.x, MoveOnParabola(z), z);
                 if (z < destination)
                 {
@@ -163,7 +165,7 @@ public class BallController : MonoBehaviour
         // Moves object to another cube using a parabola equation
         float a = 2 + Mathf.Sqrt(3);
         float h = (3 - Mathf.Sqrt(3)) / 2;
-        // In Vertex form y = -a(x-h)^2+k   parabolaTranslation is based on player's position
+        // In Vertex form y = -a(x-h)^2+k   parabolaTranslation is based on object's position
         return (float)(-a * Mathf.Pow(independent - (h + parabolaTranslation[0]), 2) + (1.75 + parabolaTranslation[1]));
     }
 
@@ -196,12 +198,6 @@ public class BallController : MonoBehaviour
         body.isKinematic = !a;
         isActive = a;
         
-    }
-
-    public void Freeze(bool a)
-    {
-        canMove = a;
-        body.useGravity = a;
     }
 
     public void ResetMe()
