@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class GameController : MonoBehaviour
 
     [Header("Misc")]
     [SerializeField] Transform characterParent;
+    [SerializeField] Highscore highscore;
 
     // Enemy Spawning
     string[][] spawnTable = new string[16][];
@@ -102,6 +104,9 @@ public class GameController : MonoBehaviour
 
             // Starts new round
             StartRound();
+        } else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Menu Scene");
         }
     }
 
@@ -353,6 +358,10 @@ public class GameController : MonoBehaviour
 
     public void ResetGame()
     {
+        // Save highscores
+        if (points > highscore.score)
+            highscore.score = points;
+        // Character freezing
         gameActive = false;
         frozen = false;
         // Cancels all invoke calls

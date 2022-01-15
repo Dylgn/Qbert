@@ -1825,10 +1825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431f2b5ca4d7a414d8f9b49c1e147161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpLeft: 113
-  UpRight: 101
-  DownLeft: 97
-  DownRight: 100
+  keybinds: {fileID: 11400000, guid: 9c63d64b67f8f494299137d4ccbb1b9e, type: 2}
   canMove: 0
   cubeController: {fileID: 118383790}
   UI: {fileID: 1774079178}
@@ -6403,13 +6400,15 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 5
     m_MaxSize: 50
-    m_Alignment: 0
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Press 'Enter' To Play
+  m_Text: 'Press ''Enter'' To Play
+
+    Press ''Escape'' To Return to Menu'
 --- !u!222 &960133841
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9868,7 +9867,6 @@ GameObject:
   - component: {fileID: 1399318363}
   - component: {fileID: 1399318362}
   - component: {fileID: 1399318361}
-  - component: {fileID: 1399318360}
   m_Layer: 6
   m_Name: Snake
   m_TagString: Untagged
@@ -9890,25 +9888,6 @@ Transform:
   m_Father: {fileID: 1224553060}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1399318360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1399318358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 431f2b5ca4d7a414d8f9b49c1e147161, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UpLeft: 113
-  UpRight: 101
-  DownLeft: 97
-  DownRight: 100
-  canMove: 0
-  cubeController: {fileID: 0}
-  UI: {fileID: 0}
 --- !u!65 &1399318361
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11491,6 +11470,7 @@ MonoBehaviour:
   - {fileID: 678980543}
   - {fileID: 940611128}
   characterParent: {fileID: 1044433885}
+  highscore: {fileID: 11400000, guid: 0abc114b732a31f45a012aad6204cdea, type: 2}
   clips:
   - {fileID: 8300000, guid: 97851d718ce54314ab513c4ebe0c50d4, type: 3}
   - {fileID: 8300000, guid: 8683c4ab82a2dd8469f5e7385f9b83ba, type: 3}

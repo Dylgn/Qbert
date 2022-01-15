@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] Keybinds keybinds;
     // Player Controls
-    public KeyCode UpLeft = KeyCode.Q;
-    public KeyCode UpRight = KeyCode.E;
-    public KeyCode DownLeft = KeyCode.A;
-    public KeyCode DownRight = KeyCode.D;
+    KeyCode UpLeft = KeyCode.Q;
+    KeyCode UpRight = KeyCode.E;
+    KeyCode DownLeft = KeyCode.A;
+    KeyCode DownRight = KeyCode.D;
     // Movement
     Direction direction = Direction.None;
     int destination = 0;
@@ -25,6 +26,11 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         audio = GetComponent<AudioSource>();
+        Debug.Log("Start");
+        UpLeft = keybinds.UpLeft;
+        UpRight = keybinds.UpRight;
+        DownLeft = keybinds.DownLeft;
+        DownRight = keybinds.DownRight;
     }
 
     enum Direction
