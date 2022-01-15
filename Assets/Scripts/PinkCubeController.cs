@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UggController : MonoBehaviour
+public class PinkCubeController : MonoBehaviour
 {
     public bool isActive = false;
     // Components
@@ -15,7 +15,7 @@ public class UggController : MonoBehaviour
     float destination = 0;
     float[] parabolaTranslation = new float[2];
     Direction direction = Direction.None;
-    public bool falling = false;
+    bool falling = false;
 
     // Used to determine which cube face the enemy jumps on
     [SerializeField] bool onLeft = true;
@@ -23,8 +23,6 @@ public class UggController : MonoBehaviour
     enum Direction
     {
         None,
-        UpLeft,
-        UpRight,
         DownLeft,
         DownRight
     }
@@ -37,7 +35,7 @@ public class UggController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!canMove)
+        if (!canMove || !isActive)
             return;
         else if (falling)
         {
@@ -60,6 +58,7 @@ public class UggController : MonoBehaviour
         // Chooses new direction (if none is selected)
         if (direction == Direction.None)
         {
+            // Randomly moves down the map
             if (Random.Range(0,2) == 0)
                 ChooseDirection(Direction.DownLeft, rotX, rotY);
             else
@@ -67,7 +66,7 @@ public class UggController : MonoBehaviour
         }
 
         // Indepedent variable used in moving object along parabola
-        float independent = 0f;
+        float independent;
         if (direction == Direction.DownLeft)
             independent = rotX;
         else
@@ -105,52 +104,6 @@ public class UggController : MonoBehaviour
 
         // Checks if object is out of bounds and resets it if it is
         CheckIfOutOfBounds(rotY);
-        /*switch (direction)
-        {
-            case Direction.DownLeft:
-                float x = rotX + Time.fixedDeltaTime * speed;
-                //Debug.Log(x + " " + MoveOnParabola(x) + " " + rotZ + " / " + parabolaTranslation[0] + " " + parabolaTranslation[1]);
-                transform.position = RotateMove(x, MoveOnParabola(x), rotZ);
-                if (x > destination)
-                {
-                    transform.position = RotateMove(Mathf.Round(rotX) + 0.5f /*PREV: 0, Mathf.Round(rotY) + 0.25f, rotZ);
-                    direction = Direction.None;
-                }
-                break;
-            case Direction.DownRight:
-                float z = rotZ - Time.fixedDeltaTime * speed;
-                //Debug.Log(rotX + " " + MoveOnParabola(z) + " " + z + " / " + parabolaTranslation[0] + " " + parabolaTranslation[1]);
-                transform.position = RotateMove(rotX, MoveOnParabola(z), z);
-                if (z < destination)
-                {
-                    transform.position = RotateMove(rotX, Mathf.Round(rotY) + 0.25f, Mathf.Round(rotZ) /*+ 0.5f);
-                    direction = Direction.None;
-                }
-                break;
-            default: // When no direction is selected (chooses one)
-                // Re-alligns object onto play area
-                transform.position = RotateMove(rotX, Mathf.Floor(rotY) + 0.25f, rotZ);
-                // Randomly moves down the map
-                if (UnityEngine.Random.Range(0, 2) == 0)
-                {
-                    if (onLeft)
-                        ChooseDirection(Direction.DownLeft, rotX, rotY);
-                    else
-                        ChooseDirection(Direction.DownLeft, rotX, rotY);
-                } else
-                {
-                    if (onLeft)
-                        ChooseDirection(Direction.DownRight, rotZ, rotY);
-                    else
-                        ChooseDirection(Direction.DownRight, rotZ, rotY);
-                }
-                /*    ChooseDirection(Direction.DownLeft, rotX, rotY, rotZ);
-                else
-                    ChooseDirection(Direction.DownRight, rotX, rotY, rotZ);
-                Debug.Log(direction);
-                break;
-        }
-        CheckIfOutOfBounds(rotY);*/
     }
 
     void ChooseDirection(Direction newDirection, float independent, float rotY)
@@ -168,28 +121,6 @@ public class UggController : MonoBehaviour
             parabolaTranslation[0] = independent - 1f;
             destination = independent - 1f;
         }
-        /*switch (newDirection)
-        {
-            case Direction.DownLeft:
-                // Translations to use on parabola (used for jumping to another cube)
-                parabolaTranslation[0] = rotX - 1f;
-                parabolaTranslation[1] = rotY - 0.5f;
-                // Gets the end point of the jump
-                destination = rotX - 1;
-                // Direction you will jump
-                direction = Direction.DownLeft;
-                // Play jump sound effect
-                audio.Play();
-                break;
-            case Direction.DownRight:
-                parabolaTranslation[0] = rotZ + 1f;
-                parabolaTranslation[1] = rotY - 0.5f;
-
-                destination = rotZ + 1;
-                direction = Direction.DownRight;
-                audio.Play();
-                break;
-        }*/
     }
 
     void CheckIfOutOfBounds(float rotY)
@@ -248,6 +179,7 @@ public class UggController : MonoBehaviour
 
     public void ResetMe()
     {
+        body.velocity = new Vector3(0, 0, 0);
         // Resets movement
         EnableMe(false);
         direction = Direction.None;

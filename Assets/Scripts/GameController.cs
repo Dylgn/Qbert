@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
     [SerializeField] CoilyController coily;
     [SerializeField] BallController[] redBalls;
     [SerializeField] BallController greenBall;
-    [SerializeField] UggController[] ugg;
+    [SerializeField] PinkCubeController[] ugg;
 
     [Header("Misc")]
     [SerializeField] Transform characterParent;
@@ -37,6 +37,7 @@ public class GameController : MonoBehaviour
 
     bool flashTiles = false;
     bool gameActive = false;
+    bool frozen = false;
 
     void Start()
     {
@@ -44,7 +45,7 @@ public class GameController : MonoBehaviour
         audio = GetComponent<AudioSource>();
 
         // List of enemies that will spawn each round (Coily spawns every round)
-        spawnTable[0] = new string[] { "RED", "UGG" /*TEMP*/ };
+        spawnTable[0] = new string[] { "RED" };
         spawnTable[1] = new string[] { "RED" };
         spawnTable[2] = new string[] { "GREEN", "UGG", "SLICK" };
         spawnTable[3] = new string[] { "RED", "GREEN", "SLICK"};
@@ -132,7 +133,10 @@ public class GameController : MonoBehaviour
 
     public void EndRound()
     {
+        CancelInvoke();
+        StopAllCoroutines();
         gameActive = false;
+        frozen = false;
 
         // Points gained from round
         int bonus = 1000 * level;
@@ -159,7 +163,6 @@ public class GameController : MonoBehaviour
         ugg[2].EnableMe(false);
         ugg[3].EnableMe(false);
 
-
         // Plays different audio for advanced to the next round or level
         if (round == 4)
             PlaySound("next-level");
@@ -177,12 +180,17 @@ public class GameController : MonoBehaviour
 
     void EnableCoily()
     {
+        if (frozen)
+            return;
+
         if (gameActive)
             coily.EnableCoily(true);
     }
 
     void EnableRedBall()
     {
+        if (frozen)
+            return;
         // Doesn't spawn new balls if game isn't active
         if (!gameActive)
             CancelInvoke("EnableRedBall");
@@ -196,6 +204,9 @@ public class GameController : MonoBehaviour
 
     void EnableGreenBall()
     {
+        if (frozen)
+            Invoke("EnableGreenBall", 10f);
+
         // Cancels if game is no longer active
         if (!gameActive)
             return;
@@ -207,11 +218,12 @@ public class GameController : MonoBehaviour
 
     void EnableUgg()
     {
+        if (frozen)
+            return;
         // Cancels if game is no longer active
         if (!gameActive)
         {
             CancelInvoke("EnableUgg");
-            return;
         }
         else if (!ugg[0].isActive) // Otherwise, enables ugg (or Wrongway)
             ugg[0].EnableMe(true);
@@ -240,13 +252,6 @@ public class GameController : MonoBehaviour
         ugg[3].ResetMe();
 
         flashTiles = false;
-    }
-
-    public void hitGreen()
-    {
-        IncreasePoints(100);
-        greenBall.ResetMe();
-        Invoke("EnableGreenBall", 10f);
     }
 
     Vector3 RandomPosAboveLevel(float y)
@@ -285,6 +290,49 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public IEnumerator freeze()
+    {
+        // Increase points and resets ball
+        IncreasePoints(100);
+        greenBall.ResetMe();
+        CancelInvoke("EnableGreenBall");
+
+        // Freezes all enemies
+        ActivateAll(false);
+        frozen = true;
+
+        // Waits 6 seconds
+        yield return new WaitForSeconds(6f);
+
+        // Unfreezes all enemies
+        ActivateAll(true);
+        frozen = false;
+        if (gameActive)
+            Invoke("EnableGreenBall", 10f);
+    }
+
+    void ActivateAll(bool a)
+    {
+        if (coily.canMove)
+            coily.isActive = a;
+        if (redBalls[0].canMove)
+            redBalls[0].isActive = a;
+        if (redBalls[1].canMove)
+            redBalls[1].isActive = a;
+        if (redBalls[2].canMove)
+            redBalls[2].isActive = a;
+        if (greenBall.canMove)
+            greenBall.isActive = a;
+        if (ugg[0].canMove)
+            ugg[0].isActive = a;
+        if (ugg[1].canMove)
+            ugg[1].isActive = a;
+        if (ugg[2].canMove)
+            ugg[2].isActive = a;
+        if (ugg[3].canMove)
+            ugg[3].isActive = a;
+    }
+
     public void PlaySound(string name)
     {
         // Plays sound with string name
@@ -305,11 +353,13 @@ public class GameController : MonoBehaviour
 
     public void ResetGame()
     {
-        // Reset all characters
         gameActive = false;
-        ResetAllCharacters();
-        // Cancels all invokoe calls
+        frozen = false;
+        // Cancels all invoke calls
         CancelInvoke();
+        StopAllCoroutines();
+        // Reset all characters
+        ResetAllCharacters();
         // Resets UI Elements
         points = 0;
         pointsText.text = "0";

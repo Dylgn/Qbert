@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class CoilyController : MonoBehaviour
 {
+    public bool isActive = false;
     // Components
     new AudioSource audio;
     Rigidbody body;
 
     // Movement
     float speed = 1f;
-    bool canMove = false;
+    public bool canMove = false;
     int destination = 0;
     int[] parabolaTranslation = new int[2];
     Direction direction = Direction.None;
@@ -35,7 +36,7 @@ public class CoilyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (body.useGravity || !canMove)
+        if (body.useGravity || !canMove || !isActive)
             return;
         else
         {
@@ -229,10 +230,12 @@ public class CoilyController : MonoBehaviour
         canMove = a;
         body.useGravity = a;
         body.isKinematic = !a;
+        isActive = a;
     }
 
     public void ResetMe()
     {
+        CancelInvoke();
         // Spawns in random position when reset (2nd highest row)
         if (UnityEngine.Random.Range(0, 2) == 1)
             transform.position = new Vector3(4f, 10.2f, 3f);
