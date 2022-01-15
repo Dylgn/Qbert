@@ -7,6 +7,11 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     [Header("UI Elements")]
+    [SerializeField] Text pointsLabel;
+    [SerializeField] Text levelLabel;
+    [SerializeField] Text roundLabel;
+    [SerializeField] Text targetLabel;
+
     [SerializeField] Text pointsText;
     [SerializeField] Text levelText;
     [SerializeField] Text roundText;
@@ -63,6 +68,14 @@ public class GameController : MonoBehaviour
         spawnTable[13] = new string[] { "RED", "GREEN", "UGG", "SLICK" };
         spawnTable[14] = new string[] { "RED", "GREEN", "SLICK" };
         spawnTable[15] = new string[] { "RED", "GREEN", "UGG", "SLICK" }; // Uses this every round after
+
+        // Move UI elements to edge of screen
+        RectTransform screen = GetComponent<RectTransform>();
+        pointsLabel.rectTransform.anchoredPosition = new Vector2(-screen.sizeDelta.x / 2 + 100, screen.sizeDelta.y / 2 - 50);
+        levelLabel.rectTransform.anchoredPosition = new Vector2(screen.sizeDelta.x / 2 - 150, screen.sizeDelta.y / 2 - 50);
+        roundLabel.rectTransform.anchoredPosition = new Vector2(screen.sizeDelta.x / 2 - 150, screen.sizeDelta.y / 2 - 90);
+        targetLabel.rectTransform.anchoredPosition = new Vector2(-screen.sizeDelta.x / 2 + 100, -screen.sizeDelta.y / 2 + 100);
+        PlayText.rectTransform.anchoredPosition = new Vector2(0, -screen.sizeDelta.y / 2 + 100);
     }
 
     void NewRound()

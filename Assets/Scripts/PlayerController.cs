@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         audio = GetComponent<AudioSource>();
-        Debug.Log("Start");
+
         UpLeft = keybinds.UpLeft;
         UpRight = keybinds.UpRight;
         DownLeft = keybinds.DownLeft;

@@ -22,7 +22,7 @@ public class ButtonController : MonoBehaviour
 
     void Start()
     {
-        highscoreText.text = "Highscore: " + highscore.score + " points";
+        highscoreText.text = "Highscore: " + highscore.score + " points this session";
         Switch(buttons);
 
         bindTexts[0].text = keybinds.UpLeft.ToString();
