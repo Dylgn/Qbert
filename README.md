@@ -4,3 +4,4 @@ This is a re-creation of the arcade game [Q*bert](https://en.wikipedia.org/wiki/
 # Demo
 A demo video can be found [here.](https://youtu.be/rsrmy0GCqlk)
 Also, here is a screenshot of the game:
+![](demo.png)
